@@ -70,7 +70,7 @@ def apply_template(dp, dataset, method):
                 for i, options in enumerate(dp["options"]):
                     dp["options"][i] =  dp["options"][i][8:-1] + " because"
         else:
-            raise NotImplementedError(o)
+            raise NotImplementedError()
     elif dataset.startswith("glue") or dataset.startswith("sick"):
         def map_option(option):
             if option in ["equivalent", "entailment"]:

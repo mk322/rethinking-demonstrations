@@ -3,7 +3,6 @@ import argparse
 import random
 import json
 import numpy as np
-
 from collections import defaultdict, Counter
 
 from templates import apply_template
@@ -14,7 +13,8 @@ def main(args):
         "75_correct", "50_correct", "25_correct", "0_correct", # ablations in Section 4
         "gold_w_template", "random_w_template", # ablations in Section 4
         "ood_inputs", "random_english_words", "random_labels_only", "no_labels", # Section 5
-        "random_english_words_gold_labels", "permutated_labels", "random_true_distribution"
+        "random_english_words_gold_labels", "permutated_labels", "random_true_distribution",
+        "double_prompt", "double_input_text", "different_ratio", "proxy_labels"
     ]
     if args.variant in ["gold_w_template", "random_w_template"]:
         assert args.method is not None, "Please specify `--method` with the inference method (`direct` or `channel`) for using the template."
@@ -41,9 +41,9 @@ def main(args):
                 random_text_lens.append(len(line.split()))
             random_text_lens = np.array(random_text_lens)
 
-    elif args.variant in ["random_english_words", "random_english_words_gold_labels"]:
-        from english_words import english_words_set
-        english_words_set = sorted(english_words_set)
+    #elif args.variant in ["random_english_words", "random_english_words_gold_labels"]:
+        #from english_words import english_words_set
+        #english_words_set = sorted(english_words_set)
 
     datasets = args.dataset.split(',')
     new_datasets = [dataset + "_" + args.variant + (("_" + args.method) if args.method is not None else "") for dataset in datasets]
@@ -63,14 +63,15 @@ def main(args):
 
         # in case of random English words, we will create a config file and data directory
         # for each random seed later on (since the data is different across seeds)
-        if args.variant in ["random_english_words", "random_english_words_gold_labels"]:
+        if args.variant in ["random_english_words", "random_english_words_gold_labels", "proxy_labels", "random", "gold_w_template", "ood_inputs"]:
             with open(os.path.join(config_file, "{}.json".format(new_dataset)), "w") as f:
                 json.dump(config, f)
 
             new_dataset_dir = os.path.join(args.data_dir, new_dataset)
             if not os.path.exists(new_dataset_dir):
                 os.mkdir(new_dataset_dir)
-        
+
+
         # load full training data to get the distribution of the labels
         if args.variant=="random_true_distribution":
             full_train_data_path = os.path.join(args.data_dir, dataset, "{}_16384_100_train.jsonl".format(dataset))
@@ -87,6 +88,7 @@ def main(args):
         for seed in seeds:
             # random seed
             np.random.seed(int(seed))
+
 
             if args.variant in ["random_english_words", "random_english_words_gold_labels"]:
                 new_dataset = new_datasets[dataset_idx] + "_seed={}".format(seed)
@@ -179,11 +181,19 @@ def main(args):
                 num_correct = args.k * int(args.variant.split("_")[0]) // 100
                 indices_correct = np.random.permutation(range(args.k))[:num_correct]
 
+            proxy_dic = {}
+            for i in range(len(train_data[0]["options"])):
+                proxy_dic[train_data[0]["options"][i]] = chr(i+97)
+
             for dp_idx, dp in enumerate(train_data):
                 if args.variant in ["gold", "gold_w_template", "permutated_labels", "random_english_words_gold_labels"] or \
                         (args.variant in ["75_correct", "50_correct", "25_correct"] and dp_idx in indices_correct):
                     # assign correct label
                     pass
+                elif args.variant=="proxy_labels":
+                    dp["output"] = proxy_dic[dp["output"]]
+                    for j in range(len(dp["options"])):
+                        dp["options"][j] = proxy_dic[dp["options"][j]]
                 elif args.variant.endswith("_correct"):
                     # assign incorrect label
                     dp["output"] = dp["options"][np.random.choice([i for i in range(len(dp["options"])) if dp["options"][i] != dp["output"]])]
@@ -218,8 +228,18 @@ def main(args):
                                                     "input": sample,
                                                     "output": train_dp["output"],
                                                     "options": train_dp["options"]})
+                        break
                 train_data = new_train_data
 
+                for i in range(len(train_data)):
+                    train_data[i] = train_data[i][0]
+                train_data  = train_data[:16]
+            # modify test labels
+            if args.variant=="proxy_labels":
+                for dp_idx, dp in enumerate(test_data):
+                    dp["output"] = proxy_dic[dp["output"]]
+                    for j in range(len(dp["options"])):
+                        dp["options"][j] = proxy_dic[dp["options"][j]]
             # write the modified data
             with open(os.path.join(new_dataset_dir, "{}_{}_{}_{}.jsonl".format(new_dataset, args.k, seed, "train")), "w") as f:
                 for dp in train_data:
