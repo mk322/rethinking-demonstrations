@@ -5,7 +5,7 @@ import json
 import numpy as np
 from collections import defaultdict, Counter
 
-from templates import apply_template
+from contextual_templates import apply_template
 
 def main(args):
     assert args.variant in [
@@ -14,7 +14,8 @@ def main(args):
         "gold_w_template", "random_w_template", # ablations in Section 4
         "ood_inputs", "random_english_words", "random_labels_only", "no_labels", # Section 5
         "random_english_words_gold_labels", "permutated_labels", "random_true_distribution",
-        "double_prompt", "double_input_text", "different_ratio", "proxy_labels"
+        "double_prompt", "double_input_text", "different_ratio", "proxy_labels",
+        "attr", "instr", "opin", "instr+opin"
     ]
     if args.variant in ["gold_w_template", "random_w_template"]:
         assert args.method is not None, "Please specify `--method` with the inference method (`direct` or `channel`) for using the template."
@@ -121,6 +122,15 @@ def main(args):
                     apply_template(dp, dataset, args.method)
                 for dp in test_data:
                     apply_template(dp, dataset, args.method)
+                    
+            new_dataset_dir = os.path.join(args.data_dir, new_dataset)
+            if not os.path.exists(new_dataset_dir):
+                os.mkdir(new_dataset_dir)
+            if args.variant in ["instr", "opin", "attr"]:
+                for dp in train_data:
+                    apply_template(dp, dataset, args.method, args.variant)
+                for dp in test_data:
+                    apply_template(dp, dataset, args.method, args.variant)
 
             # now, for random_english_words, create a config file and data directory
             if args.variant in ["random_english_words", "random_english_words_gold_labels"]:
