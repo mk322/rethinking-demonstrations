@@ -15,7 +15,7 @@ def main(args):
         "ood_inputs", "random_english_words", "random_labels_only", "no_labels", # Section 5
         "random_english_words_gold_labels", "permutated_labels", "random_true_distribution",
         "double_prompt", "double_input_text", "different_ratio", "proxy_labels",
-        "attr", "instr", "opin", "instr+opin"
+        "attr", "instr", "opin", "instr+opin", "base"
     ]
     if args.variant in ["gold_w_template", "random_w_template"]:
         assert args.method is not None, "Please specify `--method` with the inference method (`direct` or `channel`) for using the template."
@@ -64,7 +64,7 @@ def main(args):
 
         # in case of random English words, we will create a config file and data directory
         # for each random seed later on (since the data is different across seeds)
-        if args.variant in ["random_english_words", "random_english_words_gold_labels", "proxy_labels", "random", "gold_w_template", "ood_inputs"]:
+        if args.variant in ["base", "attr", "instr", "opin", "instr+opin", "random_english_words", "random_english_words_gold_labels", "proxy_labels", "random", "gold_w_template", "ood_inputs"]:
             with open(os.path.join(config_file, "{}.json".format(new_dataset)), "w") as f:
                 json.dump(config, f)
 
@@ -126,9 +126,9 @@ def main(args):
             new_dataset_dir = os.path.join(args.data_dir, new_dataset)
             if not os.path.exists(new_dataset_dir):
                 os.mkdir(new_dataset_dir)
-            if args.variant in ["instr", "opin", "attr"]:
-                for dp in train_data:
-                    apply_template(dp, dataset, args.method, args.variant)
+            if args.variant in ["instr", "opin", "attr", "instr+opin", "base"]:
+                for i in range(4):
+                    apply_template(train_data[i], dataset, args.method, args.variant)
                 for dp in test_data:
                     apply_template(dp, dataset, args.method, args.variant)
 
@@ -252,8 +252,8 @@ def main(args):
                         dp["options"][j] = proxy_dic[dp["options"][j]]
             # write the modified data
             with open(os.path.join(new_dataset_dir, "{}_{}_{}_{}.jsonl".format(new_dataset, args.k, seed, "train")), "w") as f:
-                for dp in train_data:
-                    f.write(json.dumps(dp))
+                for i in range(4):
+                    f.write(json.dumps(train_data[i]))
                     f.write("\n")
 
             with open(os.path.join(new_dataset_dir, "{}_{}_{}_{}.jsonl".format(new_dataset, args.k, seed, "test")), "w") as f:

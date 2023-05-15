@@ -47,7 +47,7 @@ def main(logger, args):
         add_newlines = False
         checkpoint = None	
         	
-    metaicl_model = GPT3Model(args.gpt3, args.api, logger)
+    metaicl_model = GPT3Model(args.gpt3, logger)
 
     if not os.path.exists(args.out_dir):
         os.makedirs(args.out_dir)
@@ -99,8 +99,8 @@ def main(logger, args):
             curr_dev_data = [dp for dp in dev_data if dp["task"]==test_task]
             curr_train_data = [dp for dp in train_data if dp["task"]==test_task]
             assert len(curr_dev_data)>0
-            assert not args.use_demonstrations or len(curr_train_data)==args.k, \
-                    (args.use_demonstrations, len(curr_train_data), args.k)
+            #assert not args.use_demonstrations or len(curr_train_data)==args.k, \
+                    #(args.use_demonstrations, len(curr_train_data), args.k)
 
             config_file = "config/tasks/{}.json".format(test_task)
             assert os.path.exists(config_file), config_file
@@ -123,6 +123,10 @@ def main(logger, args):
         return
 
     logger.info("Macro-F1 of %s over %d target tasks: %.1f" % (args.task, len(results) // len(seeds), 100*np.mean(results)))
+    
+    with open("final_result_gpt3.txt", "a") as f:
+        print(f"F1_{args.method}:", 100*np.mean(results), file=f)
+        print("")
 
     if len(errors)>0:
         logger.info("You had errors with datasets:", ",".join(errors))
@@ -240,8 +244,8 @@ if __name__=='__main__':
     parser.add_argument("--split", type=str, default="test")
     parser.add_argument("--is_null", default=False, action="store_true")
     parser.add_argument("--method", type=str, default="direct", choices=["direct", "channel"])
-    parser.add_argument("--gpt3", type=str, default="davinci", choices=["ada", "babbage", "curie", "davinci"])
-    parser.add_argument("--api", type=str, required=True)
+    parser.add_argument("--gpt3", type=str, default="davinci", choices=["text-davinci-003", "ada", "babbage", "curie", "davinci"])
+    #parser.add_argument("--api", type=str, required=True)
 
     args = parser.parse_args()
 

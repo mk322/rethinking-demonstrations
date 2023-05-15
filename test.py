@@ -109,8 +109,8 @@ def main(logger, args):
             curr_dev_data = [dp for dp in dev_data if dp["task"]==test_task]
             curr_train_data = [dp for dp in train_data if dp["task"]==test_task]
             assert len(curr_dev_data)>0
-            assert not args.use_demonstrations or len(curr_train_data)==args.k, \
-                    (args.use_demonstrations, len(curr_train_data), args.k)
+        assert not args.use_demonstrations or len(curr_train_data)==4, \
+                    (args.use_demonstrations, len(curr_train_data), 4)
 
             config_file = "config/tasks/{}.json".format(test_task)
             assert os.path.exists(config_file), config_file

@@ -10,10 +10,10 @@ from transformers import GPT2Tokenizer
 
 class GPT3Model(object):
 
-    def __init__(self, model_name, api_key, logger=None):
+    def __init__(self, model_name, logger=None):
         self.model_name = model_name
         try:
-            openai.api_key = api_key
+            openai.api_key = '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'
         except Exception:
             pass
         self.tokenizer = GPT2Tokenizer.from_pretrained("gpt2-xl")

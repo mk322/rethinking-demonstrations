@@ -12,50 +12,50 @@ TEMPLATES = {
     "poem_sentiment": {
         "direct" : {
             "base": ("{}", "The sentiment is: {}"),
-            "attr": ("{}", "Based on the poem, the sentiment is: {}"),
-            "opin": ("Bob wrote the poem, \"{}\"", "In Bob’s poem, the sentiment is: {}"),
+            "attr": ("{} Based on the poem, ", "the sentiment is: {}."),
+            "opin": ("Bob wrote the poem, \"{}\" In Bob’s poem, ", "the sentiment is: {}"),
             "instr": ("Instruction: give the sentiment based on the provided poem.\n{}", "The sentiment is: {}"),
-            "instr+opin": ("Instruction: give the sentiment based on the provided poem.\nBob wrote the poem, \"{}\"", "In Bob’s poem, the sentiment is: {}")
+            "instr+opin": ("Instruction: give the sentiment based on the provided poem.\nBob wrote the poem, \"{}\" In Bob’s poem, ", "the sentiment is: {}")
             },
         "channel": ("{}", "The sentiment is: {}")
     },
     "glue-mrpc": {
         "direct" : {
             "base": ("{}\nThe question is: {} True or False?", "The answer is: {}"),
-            "attr": ("{}\nThe question is: {} True or False?", "Based on the context, the answer is: {}"),
-            "opin": ("Bob said, \"{}\"\nThe question is: {} True or False?", "In Bob’s opinion, the answer is: {}"),
-            "instr": ("Instruction: answer the question based on the provided context.\n{}\nThe question is: {} True or False?", "The answer is: {}"),
-            "instr+opin": ("Instruction: answer the question based on the provided context.\nBob said, \"{}\"\nThe question is: {} True or False?", "In Bob’s opinion, the answer is: {}"),
+            "attr": ("Context:{}\nThe question is: {} True or False? Based on the context, ", "the answer is: {}"),
+            "opin": ("Bob said, \"{}\"\nThe question is: {} True or False? In Bob’s opinion, ", "the answer is: {}"),
+            "instr": ("Instruction: answer the question based on the provided context.\nContext:{}\nThe question is: {} True or False?", "The answer is: {}"),
+            "instr+opin": ("Instruction: answer the question based on Bob's opinion.\nBob said, \"{}\"\nThe question is: {} True or False? In Bob’s opinion, ", "the answer is: {}"),
         },
         "channel": ("The question is: {} True or False?\n{}", "The answer is: {}")
     },
     "glue-rte": {
         "direct" : {
             "base": ("{}\nThe question is: {} True or False?", "The answer is: {}"),
-            "attr": ("{}\nThe question is: {} True or False?", "Based on the context, the answer is: {}"),
-            "opin": ("Bob said, \"{}\"\nThe question is: {} True or False?", "In Bob’s opinion, the answer is: {}"),
-            "instr": ("Instruction: answer the question based on the provided context.\n{}\nThe question is: {} True or False?", "The answer is: {}"),
-            "instr+opin": ("Instruction: answer the question based on the provided context.\nBob said, \"{}\"\nThe question is: {} True or False?", "In Bob’s opinion, the answer is: {}"),
+            "attr": ("{}\nThe question is: {} True or False? Based on the context, ", "the answer is: {}"),
+            "opin": ("Bob said, \"{}\"\nThe question is: {} True or False? In Bob’s opinion, ", "the answer is: {}"),
+            "instr": ("Instruction: answer the question based on the provided context.\nContext:{}\nThe question is: {} True or False?", "The answer is: {}"),
+            "instr+opin": ("Instruction: answer the question based on the Bob's opinion.\nBob said, \"{}\"\nThe question is: {} True or False? In Bob’s opinion, ", "the answer is: {}"),
         },
         "channel": ("The question is: {} True or False?\n{}", "The answer is: {}")
     },
     "sick": {
         "direct" : {
             "base": ("{}\nThe question is: {} True or False?", "The answer is: {}"),
-            "attr": ("{}\nThe question is: {} True or False?", "Based on the context, the answer is: {}"),
-            "opin": ("Bob said, \"{}\"\nThe question is: {} True or False?", "In Bob’s opinion, the answer is: {}"),
-            "instr": ("Instruction: answer the question based on the provided context.\n{}\nThe question is: {} True or False?", "The answer is: {}"),
-            "instr+opin": ("Instruction: answer the question based on the provided context.\nBob said, \"{}\"\nThe question is: {} True or False?", "In Bob’s opinion, the answer is: {}"),
+            "attr": ("{}\nThe question is: {} True or False? Based on the context, ", "the answer is: {}"),
+            "opin": ("Bob said, \"{}\"\nThe question is: {} True or False? In Bob’s opinion, ", "the answer is: {}"),
+            "instr": ("Instruction: answer the question based on the provided context.\nContext:{}\nThe question is: {} True or False?", "The answer is: {}"),
+            "instr+opin": ("Instruction: answer the question based on Bob's opinion.\nBob said, \"{}\"\nThe question is: {} True or False? In Bob’s opinion, ", "the answer is: {}"),
         },
         "channel": ("The question is: {} True or False?\n{}", "The answer is: {}")
     },
     "tweet_eval-hate": {
         "direct" : {
             "base": ("Tweet: {}", "Sentiment: {}"),
-            "attr": ("Tweet: {}", "Based on the tweet, sentiment: {}"),
-            "opin": ("Bob wrote the tweet: , \"{}\"", "In Bob’s tweet, sentiment: {}"),
-            "instr": ("Instruction: give the sentiment based on the provided tweet.\n{}", "Sentiment: {}"),
-            "instr+opin": ("Instruction: give the sentiment based on the provided tweet.\nBob wrote the tweet, \"{}\"", "In Bob’s tweet, sentiment: {}")
+            "attr": ("Tweet: {} Based on the tweet,", "sentiment: {}"),
+            "opin": ("Bob wrote the tweet: , \"{}\"\nIn Bob’s tweet, ", "sentiment: {}"),
+            "instr": ("Instruction: give the sentiment based on the provided tweet.\nTweet: {}", "sentiment: {}"),
+            "instr+opin": ("Instruction: give the sentiment based on Bob's tweet.\nBob wrote the tweet, \"{}\"\nIn Bob’s tweet, ", "sentiment: {}")
             },
         #"direct" : ("Tweet: {}", "Sentiment: {}"),
         "channel": ("Tweet: {}", "Sentiment: {}"),

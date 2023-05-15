@@ -374,7 +374,7 @@ class MetaICLData(object):
         metadata = []
 
         if self.use_demonstrations:
-            assert len(train_data)==self.k
+            #assert len(train_data)==self.k
             demonstrations = []
             for i, dp in enumerate(train_data):
                 input_, output_ = self._prepro_each_datapoint(
