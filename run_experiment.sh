@@ -2,7 +2,7 @@
 
 for k in base instr+opin instr opin attr
 do
-    for i in gpt2-large gpt-j-6B
+    for i in opt-iml-max-30b opt-30b
     do
         for j in direct
         do

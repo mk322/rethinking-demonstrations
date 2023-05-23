@@ -14,6 +14,7 @@ from transformers import Adafactor, AdamW, get_linear_schedule_with_warmup
 from transformers import AutoModelForCausalLM
 
 from utils.utils import get_checkpoint_id, download_file
+from utils.model_util import init_opt_max_iml_30b
 
 class MetaICLModel(object):
 
@@ -85,14 +86,19 @@ class MetaICLModel(object):
         if checkpoint is not None and checkpoint.startswith("gpt"):
             gpt2 = checkpoint
             checkpoint = None
-        if checkpoint is None and "gpt" not in gpt2:
-            checkpoint = gpt2
-            gpt2 = "gpt2-large"
+        #if checkpoint is None and "gpt" not in gpt2:
+            #checkpoint = gpt2
+            #gpt2 = "gpt2-large"
         if checkpoint is None:
             if gpt2.startswith("gpt2"):
                 model = AutoModelForCausalLM.from_pretrained(gpt2)
             elif "gpt-j" in gpt2:
                 model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-j-6B") #/gpt2)
+            elif "opt-iml-max-30b" in gpt2:
+                #model = init_opt_max_iml_30b("facebook/opt-iml-max-30b")
+                model = AutoModelForCausalLM.from_pretrained("facebook/opt-iml-max-30b", torch_dtype=torch.float16, device_map="auto", offload_folder='./offload_folder')
+            elif "opt-30b" in gpt2:
+                model = AutoModelForCausalLM.from_pretrained("facebook/opt-30b", torch_dtype=torch.float16, device_map="auto", offload_folder='./offload_folder')
             else:
                 raise NotImplementedError(checkpoint)
             self.model_name = gpt2
@@ -110,7 +116,7 @@ class MetaICLModel(object):
                         self.logger.info("Downloading %s in %s", keyword, checkpoint)
                     download_file(_id, checkpoint)
 
-            assert os.path.exists(checkpoint), checkpoint
+            #assert os.path.exists(checkpoint), checkpoint
             if self.local_rank <= 0:
                 self.logger.info("Loading the model from %s" % checkpoint)
             state_dict = torch.load(checkpoint)

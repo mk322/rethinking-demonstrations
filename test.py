@@ -31,6 +31,10 @@ def main(logger, args):
 
     if args.gpt2.startswith("gpt2"):
         tokenizer = GPT2Tokenizer.from_pretrained(args.gpt2)
+    elif args.gpt2 == "opt-iml-30b":
+        tokenizer = AutoTokenizer.from_pretrained("facebook/opt-iml-30b", use_fast=False)
+    elif args.gpt2 == "opt-30b":
+        tokenizer = AutoTokenizer.from_pretrained("facebook/opt-30b", use_fast=False)
     else:
         tokenizer = AutoTokenizer.from_pretrained("gpt2")
     add_newlines = True
@@ -109,9 +113,8 @@ def main(logger, args):
             curr_dev_data = [dp for dp in dev_data if dp["task"]==test_task]
             curr_train_data = [dp for dp in train_data if dp["task"]==test_task]
             assert len(curr_dev_data)>0
-        assert not args.use_demonstrations or len(curr_train_data)==4, \
-                    (args.use_demonstrations, len(curr_train_data), 4)
-
+        #assert not args.use_demonstrations or len(curr_train_data)==4, \
+                    #(args.use_demonstrations, len(curr_train_data), 4)
             config_file = "config/tasks/{}.json".format(test_task)
             assert os.path.exists(config_file), config_file
             with open(config_file, "r") as f:
@@ -200,7 +203,7 @@ def run(logger, task, metaicl_data, metaicl_model, train_data, dev_data, seed,
     else:
         if metaicl_model.is_none():
             metaicl_model.load(checkpoint, gpt2=args.gpt2)
-            metaicl_model.cuda()
+            #metaicl_model.cuda()
             metaicl_model.eval()
 
         losses = metaicl_model.do_inference(metaicl_data, args.test_batch_size)
