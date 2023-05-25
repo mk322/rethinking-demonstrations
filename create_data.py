@@ -15,7 +15,7 @@ def main(args):
         "ood_inputs", "random_english_words", "random_labels_only", "no_labels", # Section 5
         "random_english_words_gold_labels", "permutated_labels", "random_true_distribution",
         "double_prompt", "double_input_text", "different_ratio", "proxy_labels",
-        "attr", "instr", "opin", "instr+opin", "base", "base-flip", "attr-flip"
+        "attr", "instr", "opin", "instr+opin", "base", "flip+base", "flip+attr", "flip+opin", "flip+instr", "flip+instr+opin"
     ]
     if args.variant in ["gold_w_template", "random_w_template"]:
         assert args.method is not None, "Please specify `--method` with the inference method (`direct` or `channel`) for using the template."
@@ -126,7 +126,7 @@ def main(args):
             new_dataset_dir = os.path.join(args.data_dir, new_dataset)
             if not os.path.exists(new_dataset_dir):
                 os.mkdir(new_dataset_dir)
-            if args.variant in ["instr", "opin", "attr", "instr+opin", "base"]:
+            if args.variant in ["instr", "opin", "attr", "instr+opin", "base", "flip+base", "flip+attr", "flip+opin", "flip+instr"+ "flip+instr+opin"]:
                 for i in range(4):
                     apply_template(train_data[i], dataset, args.method, args.variant)
                 for dp in test_data:
