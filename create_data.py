@@ -126,7 +126,7 @@ def main(args):
             new_dataset_dir = os.path.join(args.data_dir, new_dataset)
             if not os.path.exists(new_dataset_dir):
                 os.mkdir(new_dataset_dir)
-            if args.variant in ["instr", "opin", "attr", "instr+opin", "base", "flip+base", "flip+attr", "flip+opin", "flip+instr"+ "flip+instr+opin"]:
+            if args.variant in ["instr", "opin", "attr", "instr+opin", "base", "flip+base", "flip+attr", "flip+opin", "flip+instr", "flip+instr+opin"]:
                 for i in range(4):
                     apply_template(train_data[i], dataset, args.method, args.variant)
                 for dp in test_data:
